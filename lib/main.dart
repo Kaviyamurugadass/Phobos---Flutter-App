@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/attendance_screen.dart';
-import 'screens/contact_screen.dart';
+import 'screens/calendar_screen.dart';
 import 'screens/expenses_screen.dart';
 
 class UserProvider extends ChangeNotifier {
@@ -52,7 +52,7 @@ class PhobosAppraiserApp extends StatelessWidget {
         '/': (context) => HomeScreen(),
         '/profile': (context) => AppraiserProfileScreen(),
         '/attendance': (context) => AttendanceScreen(),
-        '/contact': (context) => ContactScreen(),
+        '/calendar': (context) => CalendarScreen(),
         '/expenses': (context) => ExpensesScreen(),
       },
     );

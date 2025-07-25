@@ -94,7 +94,7 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.calendar_month),
             title: Text('Calender'),
-            onTap: () => Navigator.pushReplacementNamed(context, '/contact'),
+            onTap: () => Navigator.pushReplacementNamed(context, '/calendar'),
           ),
            ListTile(
             leading: Icon(Icons.person),
