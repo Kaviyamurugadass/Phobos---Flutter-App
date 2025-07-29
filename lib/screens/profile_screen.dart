@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
+import '../constants/app_colors.dart';
 import '../widgets/nav_drawer.dart';
 import '../main.dart';
 
@@ -12,31 +13,15 @@ class AppraiserProfileScreen extends StatefulWidget {
 }
 
 class _AppraiserProfileScreenState extends State<AppraiserProfileScreen> {
-  final primaryColor = const Color.fromARGB(255, 4, 31, 73);
-  final goldColor = const Color(0xFFFFD700); // Gold
 
   String? uploadedFileName;
 
   Color statusColor(int userStatus) {
-    switch (userStatus) {
-      case 2:
-        return Colors.green; // Active
-      case 1:
-        return Colors.yellow; // Away
-      default:
-        return Colors.red; // Offline
-    }
+    return AppColors.getStatusColor(userStatus);
   }
 
   String statusText(int userStatus) {
-    switch (userStatus) {
-      case 2:
-        return "Active";
-      case 1:
-        return "Away";
-      default:
-        return "Offline";
-    }
+    return AppColors.getStatusText(userStatus);
   }
 
   Widget sectionTitle(String title) => Padding(
@@ -46,7 +31,7 @@ class _AppraiserProfileScreenState extends State<AppraiserProfileScreen> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: primaryColor,
+            color: AppColors.primary,
           ),
         ),
       );
@@ -60,7 +45,7 @@ class _AppraiserProfileScreenState extends State<AppraiserProfileScreen> {
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Text(
             "$label:",
-            style: TextStyle(fontWeight: FontWeight.bold, color: primaryColor),
+            style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary),
           ),
         )),
         Expanded(
@@ -131,7 +116,7 @@ class _AppraiserProfileScreenState extends State<AppraiserProfileScreen> {
       drawer: NavDrawer(),
       appBar: AppBar(
         title: const Text('Your Profile'),
-        backgroundColor: const Color.fromARGB(255, 4, 31, 73),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         actions: [
           Row(
@@ -165,7 +150,7 @@ class _AppraiserProfileScreenState extends State<AppraiserProfileScreen> {
                     children: [
                       CircleAvatar(
                         radius: 50,
-                        backgroundColor: goldColor,
+                        backgroundColor: AppColors.gold,
                         child: Icon(Icons.person, size: 50, color: Colors.white),
                       ),
                       const SizedBox(height: 10),
@@ -174,7 +159,7 @@ class _AppraiserProfileScreenState extends State<AppraiserProfileScreen> {
                         style: Theme.of(context)
                             .textTheme
                             .headlineSmall
-                            ?.copyWith(color: primaryColor),
+                            ?.copyWith(color: AppColors.primary),
                       ),
                       Text('Senior Appraiser'),
                     ],
@@ -251,11 +236,11 @@ class _AppraiserProfileScreenState extends State<AppraiserProfileScreen> {
             const SizedBox(height: 10),
             ElevatedButton.icon(
               onPressed: pickFile,
-              icon: Icon(Icons.upload_file, color: primaryColor),
+              icon: Icon(Icons.upload_file, color: AppColors.primary),
               label: const Text("Upload Documents"),
               style: ElevatedButton.styleFrom(
-                backgroundColor: goldColor,
-                foregroundColor: primaryColor,
+                backgroundColor: AppColors.gold,
+                foregroundColor: AppColors.primary,
               ),
             ),
           ],

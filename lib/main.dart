@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'constants/app_colors.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/attendance_screen.dart';
 import 'screens/calendar_screen.dart';
 import 'screens/expenses_screen.dart';
+import 'screens/leave_screen.dart';
 
 class UserProvider extends ChangeNotifier {
   int userStatus = 2; // 0 = offline, 1 = away, 2 = active
@@ -45,7 +47,14 @@ class PhobosAppraiserApp extends StatelessWidget {
       title: 'Phobos',
       theme: ThemeData(
         primarySwatch: Colors.indigo,
+        primaryColor: AppColors.primary,
+        scaffoldBackgroundColor: AppColors.background,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          primary: AppColors.primary,
+          secondary: AppColors.gold,
+        ),
       ),
       initialRoute: '/',
       routes: {
@@ -53,6 +62,7 @@ class PhobosAppraiserApp extends StatelessWidget {
         '/profile': (context) => AppraiserProfileScreen(),
         '/attendance': (context) => AttendanceScreen(),
         '/calendar': (context) => CalendarScreen(),
+        '/leave': (context) => LeaveScreen(),
         '/expenses': (context) => ExpensesScreen(),
       },
     );

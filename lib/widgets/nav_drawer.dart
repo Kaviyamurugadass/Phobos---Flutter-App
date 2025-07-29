@@ -97,6 +97,11 @@ class NavDrawer extends StatelessWidget {
             onTap: () => Navigator.pushReplacementNamed(context, '/calendar'),
           ),
            ListTile(
+            leading: Icon(Icons.beach_access),
+            title: Text('Leave'),
+            onTap: () => Navigator.pushReplacementNamed(context, '/leave'),
+          ),
+           ListTile(
             leading: Icon(Icons.person),
             title: Text('Profile'),
             onTap: () => Navigator.pushReplacementNamed(context, '/profile'),
