@@ -59,10 +59,21 @@ class _HomeScreenState extends State<HomeScreen> {
         isNearby: false,
         mapImageUrl: 'https://maps.googleapis.com/maps/api/staticmap?center=Coimbatore&zoom=15&size=400x200&markers=color:blue%7Clabel:B%7CCoimbatore',
       ),
+      BankRequest(
+        bankName: 'HDFC Bank',
+        branch: 'Chennai, T Nagar branch',
+        description: 'Appraiser needed for 3 days',
+        address: 'HDFC Bank, T Nagar, Chennai',
+        openHours: 'Open - Closes 6pm',
+        isNearby: false,
+        mapImageUrl: 'https://maps.googleapis.com/maps/api/staticmap?center=Chennai&zoom=15&size=400x200&markers=color:green%7Clabel:B%7CChennai',
+      ),
     ];
   }
 
   void _showRequestDetails(BankRequest request) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final isEngaged = userProvider.userStatus == 3;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -117,14 +128,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  if (!request.accepted)
+                  if (!isEngaged)
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
+                            for (var r in requests) {
+                              r.accepted = false;
+                            }
                             request.accepted = true;
-                            Provider.of<UserProvider>(context, listen: false).setStatus(3); // 3 = Engaged
+                            userProvider.setStatus(3); // 3 = Engaged
                           });
                           Navigator.pop(context);
                         },
@@ -136,17 +150,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: const Text('ACCEPT', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
                     ),
-                  if (request.accepted)
+                  if (isEngaged && request.accepted)
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: null,
+                        onPressed: () {
+                          setState(() {
+                            request.accepted = false;
+                            userProvider.setStatus(2); // 2 = Active
+                          });
+                          Navigator.pop(context);
+                        },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.success.withOpacity(0.7),
+                          backgroundColor: AppColors.error,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        child: const Text('ENGAGED', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        child: const Text('REJECT', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
                     ),
                   const SizedBox(height: 10),
@@ -190,8 +210,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final userProvider = Provider.of<UserProvider>(context);
     final userStatus = userProvider.userStatus;
     final userStatusText = statusText(userStatus);
+    final isEngaged = userStatus == 3;
+    final BankRequest? acceptedRequest = requests.where((r) => r.accepted).isNotEmpty ? requests.firstWhere((r) => r.accepted) : null;
     // Sort requests: nearby first
     final sortedRequests = [...requests]..sort((a, b) => b.isNearby ? 1 : -1);
+    final requestsToShow = isEngaged && acceptedRequest != null ? [acceptedRequest] : sortedRequests;
     return Scaffold(
       drawer: NavDrawer(),
       appBar: PhobosAppBar(
@@ -206,10 +229,10 @@ class _HomeScreenState extends State<HomeScreen> {
         color: AppColors.background,
         child: ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-          itemCount: sortedRequests.length,
+          itemCount: requestsToShow.length,
           separatorBuilder: (context, i) => const SizedBox(height: 16),
           itemBuilder: (context, i) {
-            final req = sortedRequests[i];
+            final req = requestsToShow[i];
             return GestureDetector(
               onTap: () => _showRequestDetails(req),
               child: Card(
