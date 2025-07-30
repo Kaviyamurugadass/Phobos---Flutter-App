@@ -16,7 +16,8 @@ class AppColors {
   
   // Status Colors
   static const Color active = Colors.green;
-  static const Color away = Colors.yellow;
+  static const Color engaged = Colors.yellow;
+  static const Color away = Colors.blue;
   static const Color offline = Colors.red;
   
   // Background Colors

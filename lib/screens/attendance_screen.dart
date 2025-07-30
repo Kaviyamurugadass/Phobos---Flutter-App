@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import '../constants/app_colors.dart';
 import '../widgets/nav_drawer.dart';
 
 class AttendanceScreen extends StatefulWidget {
@@ -29,73 +30,120 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       setState(() {
         _attendanceMarked = true;
       });
-      
-      // Vibrate the device
-      // HapticFeedback.mediumImpact();
-      
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Attendance marked successfully!'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: const Text('Attendance marked successfully!'),
+          backgroundColor: AppColors.success,
+          duration: const Duration(seconds: 2),
         ),
       );
     }
+  }
+
+  Widget _buildScanOverlay() {
+    return Center(
+      child: Container(
+        width: 250,
+        height: 250,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: AppColors.gold,
+            width: 4,
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Stack(
+          children: [
+            // Optional: Add a semi-transparent background outside the scan area
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const NavDrawer(),
-      appBar: AppBar(title: const Text('Attendance Scanner')),
+      appBar: AppBar(
+        title: const Text('Attendance Scanner'),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+      ),
       body: Stack(
         children: [
           // QR Scanner View
           if (_isScanning && !_attendanceMarked)
-            MobileScanner(
-              controller: _scannerController,
-              onDetect: _onQRCodeDetected,
+            Stack(
+              children: [
+                MobileScanner(
+                  controller: _scannerController,
+                  onDetect: _onQRCodeDetected,
+                ),
+                // Scan overlay
+                _buildScanOverlay(),
+              ],
             ),
-          
+
           // Success View
           if (_attendanceMarked)
-            const Center(
+            Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.check_circle,
-                    color: Colors.green,
+                    color: AppColors.success,
                     size: 120,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Text(
                     'Attendance Marked!',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                      color: AppColors.success,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _attendanceMarked = false;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    ),
+                    icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
+                    label: const Text(
+                      'Scan Again',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ],
               ),
             ),
-          
-          // Scanner Controls
+
+          // Scanner Controls (only show when not marked)
           if (!_attendanceMarked)
             Positioned(
               bottom: 30,
               left: 0,
               right: 0,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Torch Toggle
                   IconButton(
-                    icon: _isTorchOn
-                        ? const Icon(Icons.flash_on, color: Colors.white, size: 32)
-                        : const Icon(Icons.flash_off, color: Colors.white, size: 32),
+                    icon: Icon(
+                      _isTorchOn ? Icons.flash_on : Icons.flash_off,
+                      color: _isTorchOn ? AppColors.gold : AppColors.textLight,
+                      size: 32,
+                    ),
                     onPressed: () {
                       setState(() {
                         _isTorchOn = !_isTorchOn;
@@ -103,25 +151,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       });
                     },
                   ),
-                  
-                  // Scan Again Button (shown only after successful scan)
-                  if (_attendanceMarked)
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          _attendanceMarked = false;
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      ),
-                      icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
-                      label: const Text(
-                        'Scan Again',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                    ),
                 ],
               ),
             ),
