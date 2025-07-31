@@ -4,6 +4,7 @@ import '../main.dart';
 import '../widgets/nav_drawer.dart';
 import '../widgets/phobos_app_bar.dart';
 import '../constants/app_colors.dart';
+import 'full_map_screen.dart';
 
 class BankRequest {
   final String bankName;
@@ -13,6 +14,8 @@ class BankRequest {
   final String openHours;
   final bool isNearby;
   final String mapImageUrl;
+  final double latitude;
+  final double longitude;
   bool accepted;
 
   BankRequest({
@@ -23,6 +26,8 @@ class BankRequest {
     required this.openHours,
     required this.isNearby,
     required this.mapImageUrl,
+    required this.latitude,
+    required this.longitude,
     this.accepted = false,
   });
 }
@@ -43,32 +48,50 @@ class _HomeScreenState extends State<HomeScreen> {
     requests = [
       BankRequest(
         bankName: 'IOB Bank',
-        branch: 'Madurai branch',
+        branch: 'Vadapalani branch',
         description: 'Appraiser needed for 2 days',
-        address: 'Indian Overseas Bank, Anna Nagar Branch & Regional Office, Madurai Region. W4CR+RHJ, Kuruvikaran Salai',
+        address: 'Indian Overseas Bank, 2A, J P Verticals, Kannan, Bala Nagar, Vadapalani, Chennai, Tamil Nadu 600026',
         openHours: 'Open - Closes 5pm',
         isNearby: true,
-        mapImageUrl: 'https://maps.googleapis.com/maps/api/staticmap?center=Madurai&zoom=15&size=400x200&markers=color:red%7Clabel:B%7CMadurai',
+        mapImageUrl: 'https://maps.googleapis.com/maps/api/staticmap?center=Vadapalani,Chennai&zoom=15&size=400x200&markers=color:red%7Clabel:B%7CVadapalani',
+        latitude: 13.0500,
+        longitude: 80.2128,
       ),
       BankRequest(
         bankName: 'SBI Bank',
-        branch: 'CBE, Neelambur branch',
+        branch: 'Coimbatore Main branch',
         description: 'Appraiser needed for a week',
-        address: 'SBI Bank, Neelambur, Coimbatore',
+        address: 'State Bank of India, Post Box No. 3860, State Bank Road, Coimbatore, Tamil Nadu 641018',
         openHours: 'Open - Closes 4pm',
         isNearby: false,
         mapImageUrl: 'https://maps.googleapis.com/maps/api/staticmap?center=Coimbatore&zoom=15&size=400x200&markers=color:blue%7Clabel:B%7CCoimbatore',
+        latitude: 11.0168,
+        longitude: 76.9558,
       ),
       BankRequest(
         bankName: 'HDFC Bank',
-        branch: 'Chennai, T Nagar branch',
+        branch: 'Kilpauk branch',
         description: 'Appraiser needed for 3 days',
-        address: 'HDFC Bank, T Nagar, Chennai',
+        address: 'HDFC Bank, No. 808, Poonamalee High Road, Kilpauk, Chennai, Tamil Nadu 600010',
         openHours: 'Open - Closes 6pm',
         isNearby: false,
-        mapImageUrl: 'https://maps.googleapis.com/maps/api/staticmap?center=Chennai&zoom=15&size=400x200&markers=color:green%7Clabel:B%7CChennai',
+        mapImageUrl: 'https://maps.googleapis.com/maps/api/staticmap?center=Kilpauk,Chennai&zoom=15&size=400x200&markers=color:green%7Clabel:B%7CKilpauk',
+        latitude: 13.0809,
+        longitude: 80.2337,
+      ),
+      BankRequest(
+        bankName: 'ICICI Bank',
+        branch: 'Trichy Road branch',
+        description: 'Appraiser needed for 1 day',
+        address: 'ICICI Bank, J Building, No. 1600, Trichy Road, Coimbatore, Tamil Nadu 641018',
+        openHours: 'Open - Closes 5pm',
+        isNearby: false,
+        mapImageUrl: 'https://maps.googleapis.com/maps/api/staticmap?center=Trichy Road,Coimbatore&zoom=15&size=400x200&markers=color:purple%7Clabel:B%7CTrichy+Road',
+        latitude: 11.0062,
+        longitude: 76.9786,
       ),
     ];
+    
   }
 
   void _showRequestDetails(BankRequest request) {
@@ -95,17 +118,64 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      request.mapImageUrl,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FullMapScreen(
+                            bankName: request.bankName,
+                            branch: request.branch,
+                            address: request.address,
+                            latitude: request.latitude,
+                            longitude: request.longitude,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
                       height: 180,
                       width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        height: 180,
-                        color: AppColors.borderLight,
-                        child: const Center(child: Icon(Icons.map, size: 60, color: Colors.grey)),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.gold, width: 2),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Stack(
+                          children: [
+                            Image.network(
+                              request.mapImageUrl,
+                              height: 180,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => Container(
+                                height: 180,
+                                color: AppColors.borderLight,
+                                child: const Center(child: Icon(Icons.map, size: 60, color: Colors.grey)),
+                              ),
+                            ),
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Text(
+                                  'Tap to view full map',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
